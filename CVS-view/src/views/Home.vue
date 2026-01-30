@@ -66,7 +66,7 @@
               @click="$router.push(`/videos/${video.id}`)"
             >
               <div class="video-cover">
-                <img :src="video.thumbnailUrl || 'https://via.placeholder.com/300x188'" :alt="video.title" />
+                <img :src="getMediaUrl(video.thumbnailUrl) || 'https://via.placeholder.com/300x188'" :alt="video.title" />
                 <div class="video-duration">{{ formatDuration(video.duration) }}</div>
                 <div class="video-play-count">
                   <el-icon><VideoPlay /></el-icon>
@@ -98,6 +98,7 @@ import { videoAPI, cityAPI } from '../api/video'
 import { ElMessage } from 'element-plus'
 import { Star, Location, MoreFilled, VideoPlay, View } from '@element-plus/icons-vue'
 import AppHeader from '../components/AppHeader.vue'
+import { getMediaUrl } from '../utils/mediaUrl'
 
 const router = useRouter()
 const userStore = useUserStore()

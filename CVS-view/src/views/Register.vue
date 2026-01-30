@@ -21,7 +21,7 @@
               @click="triggerAvatarUpload"
               :class="{ 'has-avatar': registerForm.avatar }"
             >
-              <img v-if="registerForm.avatar" :src="registerForm.avatar" alt="头像" />
+              <img v-if="registerForm.avatar" :src="getMediaUrl(registerForm.avatar)" alt="头像" />
               <div v-else class="avatar-placeholder">
                 <el-icon><Plus /></el-icon>
                 <span>上传头像</span>
@@ -125,6 +125,7 @@ import { useUserStore } from '../stores/user'
 import { userAPI } from '../api/video'
 import { ElMessage } from 'element-plus'
 import { User, Lock, Message, Phone, Plus, Camera } from '@element-plus/icons-vue'
+import { getMediaUrl } from '../utils/mediaUrl'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -169,12 +170,10 @@ const handleAvatarChange = async (event) => {
 
   try {
     uploadingAvatar.value = true
-    const response = await userAPI.uploadAvatar(file)
-    if (response.data.success) {
-      registerForm.avatar = response.data.url
+    const result = await userAPI.uploadAvatarToOSS(file)
+    if (result && result.url) {
+      registerForm.avatar = result.url
       ElMessage.success('头像上传成功')
-    } else {
-      ElMessage.error(response.data.message || '上传失败')
     }
   } catch (error) {
     console.error('上传头像失败:', error)

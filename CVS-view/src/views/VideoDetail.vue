@@ -11,30 +11,35 @@
         <div 
           class="video-placeholder" 
           v-show="!videoLoaded"
-          :style="{ backgroundImage: `url(${video.coverUrl})` }"
+          :style="{ backgroundImage: `url(${getMediaUrl(video.coverUrl)})` }"
         >
           <div class="video-loading-overlay">
             <el-icon class="is-loading video-loading-icon">
               <Loading />
             </el-icon>
-            <p>视频加载�?..</p>
+            <p>视频加载?..</p>
           </div>
         </div>
         <video
           v-show="videoLoaded"
-          :src="video.videoUrl"
+          :src="getMediaUrl(video.videoUrl)"
           controls
-          :poster="video.coverUrl"
+          :poster="getMediaUrl(video.coverUrl)"
           @play="onVideoPlay"
           @loadeddata="onVideoLoaded"
           @canplay="onVideoLoaded"
+          @error="onVideoError"
         ></video>
+        <div v-if="videoError" class="video-error-message">
+          <el-icon><Warning /></el-icon>
+          <p>视频加载失败，请检查OSS配置(CORS和读写权限)</p>
+        </div>
       </div>
 
       <!-- 视频信息 -->
       <div class="video-info">
         <div class="uploader-info" v-if="video.uploaderId" @click="$router.push(`/user/${video.uploaderId}`)">
-          <el-avatar :size="40" :src="video.uploaderAvatar || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" />
+          <el-avatar :size="40" :src="getMediaUrl(video.uploaderAvatar) || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" />
           <span class="uploader-name">{{ video.uploaderName || '匿名用户' }}</span>
         </div>
         <h1>{{ video.title }}</h1>
@@ -119,7 +124,7 @@
           class="comment-item"
         >
           <div class="comment-avatar">
-            <el-avatar :src="comment.user?.avatar">{{ comment.user?.nickname?.charAt(0) || 'U' }}</el-avatar>
+            <el-avatar :src="getMediaUrl(comment.user?.avatar)">{{ comment.user?.nickname?.charAt(0) || 'U' }}</el-avatar>
           </div>
           <div class="comment-content">
             <div class="comment-info">
@@ -178,7 +183,7 @@
                 class="reply-item"
               >
                 <div class="reply-avatar">
-                  <el-avatar size="small" :src="reply.user?.avatar">{{ reply.user?.nickname?.charAt(0) || 'U' }}</el-avatar>
+                  <el-avatar size="small" :src="getMediaUrl(reply.user?.avatar)">{{ reply.user?.nickname?.charAt(0) || 'U' }}</el-avatar>
                 </div>
                 <div class="reply-content">
                   <div class="reply-info">
@@ -262,6 +267,7 @@ import {
   Loading
 } from '@element-plus/icons-vue'
 import AppHeader from '../components/AppHeader.vue'
+import { getMediaUrl } from '../utils/mediaUrl'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -278,6 +284,7 @@ const isLiked = ref(false)
 const isCollected = ref(false)
 const loading = ref(true)
 const videoLoaded = ref(false)
+const videoError = ref(false)
 const commentLoading = ref(false)
 const replyLoading = ref(false)
 const likeLoading = ref(false)
@@ -551,7 +558,14 @@ const onVideoLoaded = () => {
   videoLoaded.value = true
 }
 
-// 格式化日�?
+// 视频加载失败
+const onVideoError = (e) => {
+  console.error('视频加载失败:', e)
+  videoError.value = true
+  videoLoaded.value = true // 隐藏placeholder
+}
+
+// 格式化日?
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
   const date = new Date(dateStr)
@@ -645,6 +659,27 @@ onMounted(() => {
   width: 100%;
   max-height: 500px;
   display: block;
+}
+
+.video-error-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  z-index: 10;
+}
+
+.video-error-message .el-icon {
+  font-size: 48px;
+  color: #f56c6c;
+  margin-bottom: 16px;
 }
 
 .video-info {

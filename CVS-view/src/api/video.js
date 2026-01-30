@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { uploadVideoToOSS, uploadCoverToOSS, uploadAvatarToOSS } from '../utils/ossUpload'
 
 // 创建一个带token的axios实例
 const createAuthRequest = () => {
@@ -138,6 +139,16 @@ export const videoAPI = {
   // 增加播放量
   increaseViewCount(id) {
     return axios.post(`/api/video/${id}/view`)
+  },
+
+  // 上传视频文件到OSS（前端直传）
+  uploadVideoToOSS(file, onProgress) {
+    return uploadVideoToOSS(file, onProgress)
+  },
+
+  // 上传封面图片到OSS（前端直传）
+  uploadCoverToOSS(file, onProgress) {
+    return uploadCoverToOSS(file, onProgress)
   }
 }
 
@@ -249,6 +260,11 @@ export const userAPI = {
       },
       onUploadProgress: onProgress
     })
+  },
+
+  // 上传头像到OSS（前端直传）
+  uploadAvatarToOSS(file, onProgress) {
+    return uploadAvatarToOSS(file, onProgress)
   },
 
   // 更新用户信息

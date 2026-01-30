@@ -297,29 +297,31 @@ const handleUpload = async () => {
 
     uploading.value = true
 
-    // 1. 上传视频文件
-    ElMessage.info('正在上传视频文件...')
-    const videoResponse = await videoAPI.uploadVideoFile(videoFile.value, (progressEvent) => {
-      videoUploadProgress.value = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-    })
-
-    if (!videoResponse.data.success) {
-      throw new Error(videoResponse.data.message || '视频上传失败')
+    // 1. 上传视频文件到OSS
+    ElMessage.info('正在上传视频文件到云端...')
+    try {
+      const videoResult = await videoAPI.uploadVideoToOSS(videoFile.value, (percent) => {
+        videoUploadProgress.value = percent
+      })
+      uploadForm.videoUrl = videoResult.url
+      console.log('视频上传成功:', videoResult)
+    } catch (error) {
+      console.error('视频OSS上传失败:', error)
+      throw new Error('视频上传失败: ' + (error.message || '未知错误'))
     }
 
-    uploadForm.videoUrl = videoResponse.data.url
-
-    // 2. 上传封面图片
-    ElMessage.info('正在上传封面图片...')
-    const coverResponse = await videoAPI.uploadCoverFile(coverFile.value, (progressEvent) => {
-      coverUploadProgress.value = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-    })
-
-    if (!coverResponse.data.success) {
-      throw new Error(coverResponse.data.message || '封面上传失败')
+    // 2. 上传封面图片到OSS
+    ElMessage.info('正在上传封面图片到云端...')
+    try {
+      const coverResult = await videoAPI.uploadCoverToOSS(coverFile.value, (percent) => {
+        coverUploadProgress.value = percent
+      })
+      uploadForm.thumbnailUrl = coverResult.url
+      console.log('封面上传成功:', coverResult)
+    } catch (error) {
+      console.error('封面OSS上传失败:', error)
+      throw new Error('封面上传失败: ' + (error.message || '未知错误'))
     }
-
-    uploadForm.thumbnailUrl = coverResponse.data.url
 
     // 3. 提交视频信息
     ElMessage.info('正在保存视频信息...')

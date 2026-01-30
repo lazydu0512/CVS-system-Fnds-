@@ -102,6 +102,7 @@ import { useUserStore } from '../stores/user'
 import { messageAPI } from '../api/video'
 import { ElMessage } from 'element-plus'
 import { Search, User, Upload, Setting, SwitchButton, Bell } from '@element-plus/icons-vue'
+import { getMediaUrl } from '../utils/mediaUrl'
 
 // 滚动状态
 const isScrolled = ref(false)
@@ -161,7 +162,7 @@ onMounted(() => {
 // 计算头像URL
 const avatarUrl = computed(() => {
   if (userStore.user?.avatar) {
-    return userStore.user.avatar
+    return getMediaUrl(userStore.user.avatar)
   }
   return 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 })

@@ -43,7 +43,7 @@
       </div>
     </el-card>
 
-    <!-- 标签�?-->
+    <!-- 标签页 -->
     <el-card class="content-card" style="margin-top: 20px;">
       <el-tabs v-model="activeTab" @tab-click="handleTabClick">
         <!-- 我的视频 -->
@@ -62,7 +62,7 @@
                 @click="$router.push(`/videos/${video.id}`)"
               >
                 <div class="video-thumbnail">
-                  <img :src="video.thumbnailUrl || '/placeholder.jpg'" :alt="video.title" />
+                  <img :src="getMediaUrl(video.thumbnailUrl) || '/placeholder.jpg'" :alt="video.title" />
                   <div class="video-status" :class="getStatusClass(video)">
                     {{ getStatusText(video) }}
                   </div>
@@ -121,7 +121,7 @@
                 @click="$router.push(`/videos/${collect.videoId}`)"
               >
                 <div class="video-thumbnail">
-                  <img :src="collect.video?.thumbnailUrl || '/placeholder.jpg'" :alt="collect.video?.title" />
+                  <img :src="getMediaUrl(collect.video?.thumbnailUrl) || '/placeholder.jpg'" :alt="collect.video?.title" />
                 </div>
                 <div class="video-info">
                   <h4>{{ collect.video?.title }}</h4>
@@ -154,7 +154,7 @@
                 <div class="comment-header">
                   <div class="video-info" @click="$router.push(`/videos/${comment.videoId}`)">
                     <img 
-                      :src="comment.video?.thumbnailUrl || '/placeholder.jpg'" 
+                      :src="getMediaUrl(comment.video?.thumbnailUrl) || '/placeholder.jpg'" 
                       :alt="comment.video?.title" 
                       class="video-thumb"
                     />
@@ -238,7 +238,7 @@
               >
                 <div class="message-content">
                   <div class="message-avatar">
-                    <el-avatar :size="40" :src="msg.fromUser?.avatar">
+                    <el-avatar :size="40" :src="getMediaUrl(msg.fromUser?.avatar)">
                       {{ msg.fromUser?.nickname?.charAt(0) || 'U' }}
                     </el-avatar>
                   </div>
@@ -320,7 +320,7 @@
                 <el-input 
                   v-model="passwordForm.newPassword" 
                   type="password" 
-                  placeholder="请输入新密码（至�?位）"
+                  placeholder="请输入新密码（至少6位）"
                   show-password
                 />
               </el-form-item>
@@ -349,7 +349,7 @@
       </el-tabs>
     </el-card>
 
-    <!-- 编辑资料对话�?-->
+    <!-- 编辑资料对话框-->
     <el-dialog
       v-model="showEditDialog"
       title="编辑资料"
@@ -384,7 +384,7 @@
       </template>
     </el-dialog>
 
-    <!-- 编辑视频对话�?-->
+    <!-- 编辑视频对话框 -->
     <el-dialog
       v-model="showEditVideoDialog"
       title="编辑视频"
@@ -456,7 +456,7 @@
 
         <el-form-item label="视频文件">
           <div class="upload-area">
-            <!-- 上传�?无视屏状�?-->
+            <!-- 上传区无视频状态 -->
             <div 
               class="video-uploader" 
               @click="triggerEditVideoUpload"
@@ -468,7 +468,7 @@
               </div>
             </div>
 
-            <!-- 视频预览状�?-->
+            <!-- 视频预览状态 -->
             <div class="video-preview-container" v-if="editVideoForm.videoUrl && uploadProgress === 0">
               <video 
                 :src="getFullUrl(editVideoForm.videoUrl)" 
@@ -477,16 +477,16 @@
               ></video>
               <div class="video-edit-mask">
                 <el-button type="primary" size="small" @click="triggerEditVideoUpload" icon="Upload">
-                  更换视频�?
+                  更换视频
                 </el-button>
                 <div class="file-tip">更换后需重新审核</div>
               </div>
             </div>
 
-            <!-- 上传中状�?-->
+            <!-- 上传中状态 -->
             <div class="video-uploader uploading" v-if="uploadProgress > 0">
                <el-progress type="circle" :percentage="uploadProgress" />
-               <div class="upload-status-text">正在上传新视�?..</div>
+               <div class="upload-status-text">正在上传新视频?..</div>
             </div>
 
             <input
@@ -521,6 +521,7 @@ import { videoAPI, collectAPI, userAPI, commentAPI, messageAPI, cityAPI } from '
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Camera, Plus, VideoPlay } from '@element-plus/icons-vue'
 import AppHeader from '../components/AppHeader.vue'
+import { getMediaUrl } from '../utils/mediaUrl'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -601,7 +602,7 @@ const loadPendingCount = async () => {
 // 计算头像URL
 const avatarUrl = computed(() => {
   if (userStore.user?.avatar) {
-    return userStore.user.avatar
+    return getMediaUrl(userStore.user.avatar)
   }
   return 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 })
@@ -623,16 +624,16 @@ const handleAvatarChange = async (event) => {
     return
   }
 
-  // 验证文件大小�?5MB�?
+  // 验证文件大小
   if (file.size > 15 * 1024 * 1024) {
     ElMessage.error('图片大小不能超过 15MB')
     return
   }
 
   try {
-    const response = await userAPI.uploadAvatar(file)
-    if (response.data.success) {
-      const avatarUrl = response.data.url
+    const result = await userAPI.uploadAvatarToOSS(file)
+    if (result && result.url) {
+      const avatarUrl = result.url
       // 更新用户头像
       const updateResponse = await userAPI.updateUser(userStore.user.id, { avatar: avatarUrl })
       if (updateResponse.data.success) {
@@ -754,7 +755,7 @@ const changePassword = async () => {
       passwordForm.newPassword = ''
       passwordForm.confirmPassword = ''
       
-      // 登出并跳�?
+      // 登出并跳转
       userStore.logout()
       router.push('/login')
     } else {
@@ -771,7 +772,7 @@ const changePassword = async () => {
   }
 }
 
-// 计算属�?
+// 计算属性
 const settingsFormRef = ref()
 const editFormRef = ref()
 
@@ -928,13 +929,9 @@ const editVideo = (video) => {
   showEditVideoDialog.value = true
 }
 
-// 获取完整图片地址
+// 获取完整图片地址 - 使用统一的mediaUrl工具
 const getFullUrl = (url) => {
-  if (!url) return ''
-  if (url.startsWith('blob:') || url.startsWith('http')) {
-    return url
-  }
-  return `http://localhost:8080${url}`
+  return getMediaUrl(url)
 }
 
 // 触发编辑封面上传
@@ -963,9 +960,9 @@ const handleEditCoverChange = async (event) => {
   editVideoForm.thumbnailUrl = previewUrl
 
   try {
-    const response = await videoAPI.uploadCoverFile(file)
-    if (response.data.success) {
-      editVideoForm.thumbnailUrl = response.data.url
+    const result = await videoAPI.uploadCoverToOSS(file)
+    if (result && result.url) {
+      editVideoForm.thumbnailUrl = result.url
       ElMessage.success('封面上传成功')
     }
   } catch (error) {
@@ -991,12 +988,12 @@ const handleEditVideoChange = async (event) => {
 
   try {
     uploadProgress.value = 0
-    const response = await videoAPI.uploadVideoFile(file, (progressEvent) => {
-      uploadProgress.value = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+    const result = await videoAPI.uploadVideoToOSS(file, (progress) => {
+      uploadProgress.value = progress
     })
     
-    if (response.data.success) {
-      editVideoForm.videoUrl = response.data.url
+    if (result && result.url) {
+      editVideoForm.videoUrl = result.url
       ElMessage.success('视频上传成功')
     }
   } catch (error) {

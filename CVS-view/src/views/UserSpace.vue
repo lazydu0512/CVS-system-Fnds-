@@ -7,7 +7,7 @@
       <div class="user-profile-container">
         <div class="user-profile-card">
           <div class="user-avatar">
-            <el-avatar :size="100" :src="userInfo?.avatar || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" />
+            <el-avatar :size="100" :src="getMediaUrl(userInfo?.avatar) || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" />
           </div>
           <div class="user-info">
             <h1 class="nickname">{{ userInfo?.nickname || '加载中...' }}</h1>
@@ -36,7 +36,7 @@
                 @click="$router.push(`/videos/${video.id}`)"
               >
                 <div class="video-cover">
-                  <img :src="video.thumbnailUrl || 'https://via.placeholder.com/300x188'" :alt="video.title" />
+                  <img :src="getMediaUrl(video.thumbnailUrl) || 'https://via.placeholder.com/300x188'" :alt="video.title" />
                   <div class="video-duration">{{ formatDuration(video.duration) }}</div>
                   <div class="video-play-count">
                     <el-icon><VideoPlay /></el-icon>
@@ -71,6 +71,7 @@ import { userAPI, videoAPI } from '../api/video'
 import { VideoPlay, View } from '@element-plus/icons-vue'
 import AppHeader from '../components/AppHeader.vue'
 import { ElMessage } from 'element-plus'
+import { getMediaUrl } from '../utils/mediaUrl'
 
 const route = useRoute()
 const userId = computed(() => route.params.userId)

@@ -36,6 +36,9 @@ public class VideoService extends ServiceImpl<VideoMapper, Video> {
     @org.springframework.beans.factory.annotation.Autowired
     private CityManagerService cityManagerService;
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private OSSService ossService;
+
     /**
      * 上传视频
      */
@@ -395,7 +398,32 @@ public class VideoService extends ServiceImpl<VideoMapper, Video> {
 
         // 删除关联数据（如评论、收藏等，视数据库外键策略而定，这里仅删除视频）
         // 实际项目中应级联删除或软删除，这里演示硬删除
-        return removeById(videoId);
+
+        boolean success = removeById(videoId);
+
+        // 如果删除成功，则删除OSS中的文件
+        if (success) {
+            System.out.println("视频ID " + videoId + " 数据库记录删除成功，准备删除OSS文件");
+            // 异步或同步删除文件
+            try {
+                if (video.getVideoUrl() != null) {
+                    System.out.println("准备删除视频文件: " + video.getVideoUrl());
+                    ossService.deleteFile(video.getVideoUrl());
+                }
+                if (video.getThumbnailUrl() != null) {
+                    System.out.println("准备删除封面文件: " + video.getThumbnailUrl());
+                    ossService.deleteFile(video.getThumbnailUrl());
+                }
+            } catch (Exception e) {
+                log.error("删除OSS文件失败", e);
+                System.err.println("删除OSS文件流程发生异常: " + e.getMessage());
+                // 不影响主业务
+            }
+        } else {
+            System.err.println("视频ID " + videoId + " 数据库记录删除失败，跳过OSS文件删除");
+        }
+
+        return success;
     }
 
     /**

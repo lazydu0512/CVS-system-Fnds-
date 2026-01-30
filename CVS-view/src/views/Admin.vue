@@ -91,7 +91,7 @@
                 <div class="video-content">
                   <div class="video-preview">
                     <img
-                      :src="video.thumbnailUrl || '/placeholder.jpg'"
+                      :src="getMediaUrl(video.thumbnailUrl) || '/placeholder.jpg'"
                       :alt="video.title"
                       class="video-thumbnail"
                       @click="previewVideo(video)"
@@ -485,6 +485,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import AppHeader from '../components/AppHeader.vue'
 import { useUserStore } from '../stores/user'
+import { getMediaUrl } from '../utils/mediaUrl'
 
 const router = useRouter()
 const userStore = useUserStore()

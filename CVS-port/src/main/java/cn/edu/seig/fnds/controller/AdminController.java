@@ -197,15 +197,15 @@ public class AdminController {
         }
 
         try {
-            boolean success = videoService.removeById(id);
+            boolean success = videoService.deleteVideo(id, user);
             if (success) {
                 result.put("success", true);
                 result.put("message", "删除成功");
                 return ResponseEntity.ok(result);
             } else {
                 result.put("success", false);
-                result.put("message", "视频不存在");
-                return ResponseEntity.notFound().build();
+                result.put("message", "删除失败");
+                return ResponseEntity.badRequest().body(result);
             }
         } catch (Exception e) {
             result.put("success", false);

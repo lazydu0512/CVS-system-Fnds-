@@ -4,10 +4,10 @@
     <AppHeader />
 
     <div class="preview-container">
-      <!-- 管理员提示横�?-->
+      <!-- 管理员提示横幅 -->
       <div class="admin-banner">
         <el-icon><Warning /></el-icon>
-        <span>管理员预览模�?- 此视频尚未通过审核</span>
+        <span>管理员预览模式 - 此视频尚未通过审核</span>
         <el-tag :type="statusTagType" size="small">{{ statusText }}</el-tag>
       </div>
 
@@ -18,23 +18,28 @@
           <div 
             class="video-placeholder" 
             v-show="!videoLoaded"
-            :style="{ backgroundImage: `url(${video.coverUrl})` }"
+            :style="{ backgroundImage: `url(${getMediaUrl(video.coverUrl)})` }"
           >
             <div class="video-loading-overlay">
               <el-icon class="is-loading video-loading-icon">
                 <Loading />
               </el-icon>
-              <p>视频加载�?..</p>
+              <p>视频加载中?..</p>
             </div>
           </div>
           <video
             v-show="videoLoaded"
-            :src="video.videoUrl"
+            :src="getMediaUrl(video.videoUrl)"
             controls
-            :poster="video.coverUrl"
+            :poster="getMediaUrl(video.coverUrl)"
             @loadeddata="onVideoLoaded"
             @canplay="onVideoLoaded"
+            @error="onVideoError"
           ></video>
+          <div v-if="videoError" class="video-error-message">
+            <el-icon><Warning /></el-icon>
+            <p>视频加载失败，请检查OSS配置</p>
+          </div>
         </div>
 
         <!-- 视频信息 -->
@@ -43,7 +48,7 @@
           <div class="video-meta">
             <span class="city">{{ video.city }}</span>
             <span class="date">{{ formatDate(video.concertDate) }}</span>
-            <span class="uploader">上传�? {{ video.uploaderName || video.uploaderId }}</span>
+            <span class="uploader">上传者 {{ video.uploaderName || video.uploaderId }}</span>
             <span class="upload-time">上传时间: {{ formatTime(video.createTime) }}</span>
           </div>
 
@@ -125,6 +130,7 @@ import {
   Close
 } from '@element-plus/icons-vue'
 import AppHeader from '../components/AppHeader.vue'
+import { getMediaUrl } from '../utils/mediaUrl'
 
 const route = useRoute()
 const router = useRouter()
@@ -133,6 +139,7 @@ const userStore = useUserStore()
 const video = ref(null)
 const loading = ref(true)
 const videoLoaded = ref(false)
+const videoError = ref(false)
 const reviewComment = ref('')
 const reviewLoading = ref(false)
 const errorMessage = ref('')
@@ -191,6 +198,12 @@ const loadVideo = async () => {
 
 // 视频加载完成
 const onVideoLoaded = () => {
+  videoLoaded.value = true
+}
+
+const onVideoError = (e) => {
+  console.error('视频加载失败:', e)
+  videoError.value = true
   videoLoaded.value = true
 }
 
@@ -318,6 +331,27 @@ onMounted(() => {
   width: 100%;
   max-height: 500px;
   display: block;
+}
+
+.video-error-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  z-index: 10;
+}
+
+.video-error-message .el-icon {
+  font-size: 48px;
+  color: #f56c6c;
+  margin-bottom: 16px;
 }
 
 .video-info {
