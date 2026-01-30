@@ -1,0 +1,18 @@
+# 忽略依赖
+node_modules/
+target/
+.mvn/
+*.class
+
+# 忽略日志和系统文件
+*.log
+.DS_Store
+dist/
+.idea/
+.vscode/
+
+# 忽略后端打包产物
+*.jar
+*.jar.original
+# 忽略视频文件
+*.mp4

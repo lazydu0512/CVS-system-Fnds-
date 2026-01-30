@@ -1,0 +1,132 @@
+/* B站风格全局样式 */
+:root {
+  /* B站主题色 */
+  --fnds-pink: #fb7299;
+  --fnds-blue: #00a1d6;
+  --fnds-bg: #f4f4f4;
+  --fnds-white: #ffffff;
+  --fnds-text: #212121;
+  --fnds-text-2: #505050;
+  --fnds-text-3: #999999;
+  --fnds-border: #e7e7e7;
+  --fnds-hover: #f6f7f8;
+  --fnds-blue: #00AEEC;
+  --fnds-blue: #1a1a2e;
+  /* 字体 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  color: var(--fnds-text);
+  background-color: var(--fnds-bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegifndsty;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  background-color: var(--fnds-bg);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#app {
+  min-height: 100vh;
+  background-color: var(--fnds-bg);
+}
+
+a {
+  color: var(--fnds-blue);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: var(--fnds-pink);
+}
+
+/* 滚动条样�?*/
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Element Plus 主题定制 */
+.el-button--primary {
+  background-color: var(--fnds-pink) !important;
+  border-color: var(--fnds-pink) !important;
+}
+
+.el-button--primary:hover {
+  background-color: #ff85ad !important;
+  border-color: #ff85ad !important;
+}
+
+/* 卡片阴影 */
+.card-shadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s;
+}
+
+.card-shadow:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 通用容器 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 文本省略 */
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-ellipsis-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 响应�?*/
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+}
