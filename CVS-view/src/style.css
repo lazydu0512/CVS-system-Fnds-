@@ -1,8 +1,10 @@
-/* B站风格全局样式 */
+﻿/* B站风格全局样式 */
 :root {
-  /* B站主题色 */
-  --fnds-pink: #fb7299;
-  --fnds-blue: #00a1d6;
+  /* FNDS主题色 - 蓝色系 */
+  --fnds-pink: #2b86c3;
+  --fnds-blue: #2b86c3;
+  --fnds-blue-light: #4a9fd4;
+  --fnds-blue-dark: #1e6a9e;
   --fnds-bg: #f4f4f4;
   --fnds-white: #ffffff;
   --fnds-text: #212121;
@@ -10,8 +12,17 @@
   --fnds-text-3: #999999;
   --fnds-border: #e7e7e7;
   --fnds-hover: #f6f7f8;
-  --fnds-blue: #00AEEC;
-  --fnds-blue: #1a1a2e;
+  
+  /* bili兼容变量 */
+  --bili-pink: #2b86c3;
+  --bili-blue: #2b86c3;
+  --bili-white: #ffffff;
+  --bili-text: #212121;
+  --bili-text-2: #505050;
+  --bili-text-3: #999999;
+  --bili-border: #e7e7e7;
+  --bili-hover: #f6f7f8;
+  
   /* 字体 */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial,
     'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -24,7 +35,7 @@
   background-color: var(--fnds-bg);
 
   font-synthesis: none;
-  text-rendering: optimizeLegifndsty;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -59,10 +70,10 @@ a {
 }
 
 a:hover {
-  color: var(--fnds-pink);
+  color: var(--fnds-blue-light);
 }
 
-/* 滚动条样�?*/
+/* 滚动条样式 */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -81,15 +92,15 @@ a:hover {
   background: #a8a8a8;
 }
 
-/* Element Plus 主题定制 */
+/* Element Plus 主题定制 - 蓝色主题 */
 .el-button--primary {
-  background-color: var(--fnds-pink) !important;
-  border-color: var(--fnds-pink) !important;
+  background-color: var(--fnds-blue) !important;
+  border-color: var(--fnds-blue) !important;
 }
 
 .el-button--primary:hover {
-  background-color: #ff85ad !important;
-  border-color: #ff85ad !important;
+  background-color: var(--fnds-blue-light) !important;
+  border-color: var(--fnds-blue-light) !important;
 }
 
 /* 卡片阴影 */
@@ -124,7 +135,7 @@ a:hover {
   text-overflow: ellipsis;
 }
 
-/* 响应�?*/
+/* 响应式 */
 @media (max-width: 768px) {
   .container {
     padding: 0 10px;

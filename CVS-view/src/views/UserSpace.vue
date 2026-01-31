@@ -1,6 +1,6 @@
 <template>
   <div class="user-space">
-    <AppHeader />
+    <AppHeader :showBanner="false" />
 
     <div class="user-header">
       <div class="header-banner"></div>

@@ -1,7 +1,7 @@
 <template>
   <div class="video-list-page">
     <!-- 顶部导航 -->
-    <AppHeader @search="handleHeaderSearch" />
+    <AppHeader @search="handleHeaderSearch" :showBanner="false" />
 
     <div class="video-list-container">
       <!-- 页面标题 -->
@@ -276,7 +276,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: var(--bili-pink, #fb7299);
+  color: var(--bili-pink, #2b86c3);
 }
 
 .page-subtitle {
@@ -324,7 +324,7 @@ onMounted(() => {
 }
 
 .result-info strong {
-  color: var(--bili-pink, #fb7299);
+  color: var(--bili-pink, #2b86c3);
   font-weight: 600;
 }
 

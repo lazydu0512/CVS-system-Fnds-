@@ -1,7 +1,7 @@
 <template>
   <div class="profile-page">
     <!-- 顶部导航 -->
-    <AppHeader :showSearch="false" />
+    <AppHeader :showSearch="false" :showBanner="false" />
 
     <div class="profile">
       <el-card class="profile-card">
@@ -1222,7 +1222,7 @@ onMounted(() => {
 
 .card-header h2 {
   margin: 0;
-  color: var(--fnds-pink, #fb7299);
+  color: var(--fnds-pink, #2b86c3);
 }
 
 .user-info {
@@ -1513,7 +1513,7 @@ onMounted(() => {
 }
 
 .message-tab:hover, .message-tab.active {
-  color: var(--fnds-pink, #fb7299);
+  color: var(--fnds-pink, #2b86c3);
   font-weight: 500;
 }
 

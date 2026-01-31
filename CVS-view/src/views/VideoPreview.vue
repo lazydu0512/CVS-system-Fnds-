@@ -1,7 +1,7 @@
 <template>
   <div class="video-preview-page">
     <!-- 顶部导航 -->
-    <AppHeader />
+    <AppHeader :showBanner="false" />
 
     <div class="preview-container">
       <!-- 管理员提示横幅 -->

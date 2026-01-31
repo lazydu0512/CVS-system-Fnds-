@@ -1,7 +1,7 @@
 <template>
   <div class="admin-page">
     <!-- 顶部导航 -->
-    <AppHeader :showSearch="false" />
+    <AppHeader :showSearch="false" :showBanner="false" />
 
     <div class="admin">
       <el-card class="admin-card">

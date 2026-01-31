@@ -1,7 +1,7 @@
 <template>
   <div class="video-detail-page">
     <!-- 顶部导航 -->
-    <AppHeader />
+    <AppHeader :showBanner="false" />
 
     <div class="video-detail">
       <!-- 视频播放区域 -->

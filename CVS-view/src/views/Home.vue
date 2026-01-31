@@ -360,7 +360,7 @@ onMounted(() => {
 .category-item.active {
   border-radius: 8px;
   border: 1px solid var(--fnds-pink);
-  background-color: #fff0f6;
+  background-color: #e6f4fa;
   color: var(--fnds-pink);
 }
 

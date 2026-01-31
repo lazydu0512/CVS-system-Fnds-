@@ -1,7 +1,7 @@
 <template>
   <div class="upload-page">
     <!-- 顶部导航 -->
-    <AppHeader :showSearch="false" />
+    <AppHeader :showSearch="false" :showBanner="false" />
 
     <div class="video-upload">
       <el-card class="upload-card">

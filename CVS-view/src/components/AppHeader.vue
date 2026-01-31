@@ -1,8 +1,8 @@
 ﻿<template>
   <!-- B站风格顶部导航栏 -->
-  <header :class="['bili-header', { 'scrolled': isScrolled }]">
-    <!-- Banner 背景层 -->
-    <div class="header-banner" v-show="!isScrolled">
+  <header :class="['bili-header', { 'scrolled': isScrolled || !props.showBanner }]">
+    <!-- Banner 背景层 - 仅在 showBanner 为 true 时显示 -->
+    <div v-if="props.showBanner" :class="['header-banner', { 'banner-hidden': isScrolled }]">
       <img 
         src="/bg2.png" 
         alt="banner" 
@@ -125,6 +125,10 @@ const props = defineProps({
   showSearch: {
     type: Boolean,
     default: true
+  },
+  showBanner: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -216,6 +220,13 @@ const handleCommand = (command) => {
   overflow: hidden;
   position: relative;
   background-color: #1a1a2e; /* 深色占位背景 */
+  transition: height 0.3s ease, opacity 0.3s ease;
+}
+
+/* Banner 隐藏状态 - 使用高度过渡避免滚动弹跳 */
+.header-banner.banner-hidden {
+  height: 0;
+  opacity: 0;
 }
 
 /* Banner 图片 */
@@ -232,12 +243,13 @@ const handleCommand = (command) => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
-/* 导航内容层 - 未滚动时覆盖在 banner 上 */
+/* 导航内容层 - 未滚动时覆盖在 banner 上并垂直居中 */
 .bili-header:not(.scrolled) .header-container {
   position: absolute;
-  top: 0;
+  top: 50%;
   left: 0;
   right: 0;
+  transform: translateY(-50%);
   z-index: 10;
 }
 
@@ -282,7 +294,7 @@ const handleCommand = (command) => {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 20px;
-  height: 100%;
+  height: 65px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -337,8 +349,8 @@ const handleCommand = (command) => {
 
 .nav-item:hover,
 .nav-item.active {
-  color: var(--bili-pink, #fb7299);
-  border-bottom-color: var(--bili-pink, #fb7299);
+  color: var(--bili-pink, #2b86c3);
+  border-bottom-color: var(--bili-pink, #2b86c3);
 }
 
 /* 搜索框 */
@@ -461,7 +473,7 @@ const handleCommand = (command) => {
 }
 
 .message-entry:hover {
-  color: var(--bili-pink, #fb7299);
+  color: var(--bili-pink, #2b86c3);
 }
 
 .message-icon-wrapper {
@@ -499,7 +511,7 @@ const handleCommand = (command) => {
 }
 
 .user-avatar:hover {
-  border-color: var(--bili-pink, #fb7299);
+  border-color: var(--bili-pink, #2b86c3);
 }
 
 .user-avatar img {
