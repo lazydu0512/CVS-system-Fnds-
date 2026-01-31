@@ -84,6 +84,13 @@
               </div>
             </div>
           </div>
+          
+          <!-- 空状态提示 -->
+          <div v-if="!loading && hotVideos.length === 0" class="empty-state">
+            <el-icon class="empty-icon"><VideoPlay /></el-icon>
+            <p class="empty-text">还没有E粉发布该城市的视频，快去投稿吧</p>
+            <el-button type="primary" @click="$router.push('/upload')">立即投稿</el-button>
+          </div>
         </div>
       </div>
     </main>
@@ -525,6 +532,30 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+/* 空状态样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: var(--fnds-text-2);
+  margin-bottom: 24px;
+  line-height: 1.6;
+  font-weight: 600;
 }
 
 /* 响应�?*/

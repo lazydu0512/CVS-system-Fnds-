@@ -47,8 +47,8 @@
       <!-- 用户区域 -->
       <div class="header-right">
         <template v-if="!userStore.isLoggedIn">
-          <button class="login-btn" @click="$router.push('/login')">登录</button>
-          <button class="register-btn" @click="$router.push('/register')">注册</button>
+          <button class="login-btn" @click="openLoginModal">登录</button>
+          <button class="register-btn" @click="openRegisterModal">注册</button>
         </template>
         <template v-else>
           <!-- 消息入口 -->
@@ -92,6 +92,13 @@
         </template>
       </div>
     </div>
+    
+    <!-- 登录注册弹窗 -->
+    <LoginRegisterModal 
+      v-model="showLoginRegisterModal" 
+      :defaultTab="loginRegisterTab"
+      @loginSuccess="handleLoginSuccess"
+    />
   </header>
 </template>
 
@@ -103,6 +110,7 @@ import { messageAPI } from '../api/video'
 import { ElMessage } from 'element-plus'
 import { Search, User, Upload, Setting, SwitchButton, Bell } from '@element-plus/icons-vue'
 import { getMediaUrl } from '../utils/mediaUrl'
+import LoginRegisterModal from './LoginRegisterModal.vue'
 
 // 滚动状态
 const isScrolled = ref(false)
@@ -140,6 +148,8 @@ const userStore = useUserStore()
 
 const searchKeyword = ref('')
 const unreadCount = ref(0)
+const showLoginRegisterModal = ref(false)
+const loginRegisterTab = ref('login') // 'login' or 'register'
 
 // 获取未读消息数
 const loadUnreadCount = async () => {
@@ -200,6 +210,23 @@ const handleCommand = (command) => {
       router.push('/')
       break
   }
+}
+
+// 打开登录弹窗
+const openLoginModal = () => {
+  loginRegisterTab.value = 'login'
+  showLoginRegisterModal.value = true
+}
+
+// 打开注册弹窗
+const openRegisterModal = () => {
+  loginRegisterTab.value = 'register'
+  showLoginRegisterModal.value = true
+}
+
+// 登录成功后的处理
+const handleLoginSuccess = () => {
+  loadUnreadCount()
 }
 </script>
 

@@ -331,6 +331,20 @@ export const userAPI = {
         'Authorization': `Bearer ${token}`
       } : {}
     })
+  },
+
+  // 更新用户头像
+  updateUserAvatar(avatarUrl) {
+    const token = localStorage.getItem('token')
+    const userId = JSON.parse(localStorage.getItem('user'))?.id
+    if (!userId) {
+      return Promise.reject(new Error('用户未登录'))
+    }
+    return axios.put(`/api/user/${userId}`, { avatar: avatarUrl }, {
+      headers: token ? {
+        'Authorization': `Bearer ${token}`
+      } : {}
+    })
   }
 }
 

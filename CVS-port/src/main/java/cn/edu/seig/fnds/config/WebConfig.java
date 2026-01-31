@@ -56,6 +56,7 @@ public class WebConfig implements WebMvcConfigurer {
                                                 "/api/comment/video/**",
                                                 "/api/city", // 放行城市列表接口
                                                 "/api/file/**", // 放行文件上传接口
+                                                "/api/oss/upload-token/avatar", // 放行头像上传token接口（注册时需要）
                                                 "/uploads/**" // 放行上传的静态资源
                                 );
                 // 注意：/api/video/{id} 不再排除，因为它会匹配 /api/video/upload
