@@ -95,6 +95,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Spring Security (仅用于密码加密，不启用完整的Security功能) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
+
         <!-- 视频处理库 - 用于获取视频时长等信息 -->
         <dependency>
             <groupId>ws.schild</groupId>

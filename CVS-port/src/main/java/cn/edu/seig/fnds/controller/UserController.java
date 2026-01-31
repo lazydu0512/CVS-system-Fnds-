@@ -23,9 +23,12 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -289,14 +292,14 @@ public class UserController {
 
             // 验证原密码
             User user = userService.getById(currentUser.getId());
-            if (!user.getPassword().equals(oldPassword)) {
+            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
                 result.put("success", false);
                 result.put("message", "原密码错误");
                 return ResponseEntity.badRequest().body(result);
             }
 
-            // 更新密码
-            user.setPassword(newPassword);
+            // 加密新密码
+            user.setPassword(passwordEncoder.encode(newPassword));
             boolean success = userService.updateById(user);
 
             if (success) {
@@ -316,7 +319,8 @@ public class UserController {
     }
 
     /**
-     * 管理员查看用户密码
+     * 管理员查看用户密码（已禁用 - 安全考虑）
+     * 密码已使用BCrypt加密，无法查看明文
      */
     @GetMapping("/{id}/password")
     public ResponseEntity<Map<String, Object>> getUserPassword(
@@ -332,22 +336,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
         }
 
-        try {
-            User user = userService.getById(id);
-            if (user == null) {
-                result.put("success", false);
-                result.put("message", "用户不存在");
-                return ResponseEntity.notFound().build();
-            }
-
-            result.put("success", true);
-            result.put("password", user.getPassword());
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "获取密码失败: " + e.getMessage());
-            return ResponseEntity.badRequest().body(result);
-        }
+        result.put("success", false);
+        result.put("message", "密码已加密存储，无法查看明文。如需重置密码，请使用修改密码功能。");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
     }
 
     /**
@@ -389,8 +380,8 @@ public class UserController {
                 return ResponseEntity.notFound().build();
             }
 
-            // 更新密码
-            user.setPassword(newPassword);
+            // 加密新密码
+            user.setPassword(passwordEncoder.encode(newPassword));
             boolean success = userService.updateById(user);
 
             if (success) {

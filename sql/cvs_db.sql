@@ -11,7 +11,7 @@
  Target Server Version : 80100
  File Encoding         : 65001
 
- Date: 30/01/2026 23:48:24
+ Date: 01/02/2026 00:47:46
 */
 
 SET NAMES utf8mb4;
@@ -66,7 +66,7 @@ CREATE TABLE `city_manager`  (
   INDEX `idx_user`(`user_id`) USING BTREE,
   CONSTRAINT `city_manager_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `city_manager_ibfk_2` FOREIGN KEY (`city_id`) REFERENCES `city` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of city_manager
@@ -98,7 +98,7 @@ CREATE TABLE `comment`  (
   CONSTRAINT `fk_comment_parent` FOREIGN KEY (`parent_id`) REFERENCES `comment` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `fk_comment_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_comment_video` FOREIGN KEY (`video_id`) REFERENCES `video` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of comment
@@ -124,7 +124,7 @@ CREATE TABLE `message`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_user_id`(`user_id`) USING BTREE,
   INDEX `idx_is_read`(`is_read`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of message
@@ -139,6 +139,12 @@ INSERT INTO `message` VALUES (7, 5, 1, 4, 11, NULL, '您的视频《【官方ENC
 INSERT INTO `message` VALUES (8, 5, 1, 4, 10, NULL, '您的视频《【官方ENCORE - 悉尼站】《信任》｜陈奕迅FEAR AND DREAMS 悉尼站｜第二场 15 MAR 2025 ENCORE》审核通过。备注: 审核通过', 1, '2026-01-29 23:53:23');
 INSERT INTO `message` VALUES (9, 5, 1, 4, 9, NULL, '您的视频《【官方ENCORE - 澳门站】《防不胜防》｜陈奕迅FEAR AND DREAMS 澳门站｜10 AUG 2025 ENCORE》审核通过。备注: 审核通过', 1, '2026-01-29 23:53:24');
 INSERT INTO `message` VALUES (10, 4, 5, 4, 13, NULL, '您的视频《【官方ENCORE - 澳门站】《粤语残片》｜陈奕迅FEAR AND DREAMS 澳门站｜10 AUG 2025 ENCORE》审核通过', 0, '2026-01-30 21:59:06');
+INSERT INTO `message` VALUES (11, 5, 5, 4, 14, NULL, '您的视频《【官方ENCORE - 澳门站】《粤语残片》｜陈奕迅FEAR AND DREAMS 澳门站｜10 AUG 2025 ENCORE》审核通过。备注: 审核通过', 0, '2026-01-31 00:36:29');
+INSERT INTO `message` VALUES (12, 1, 1, 4, 15, NULL, '您的视频《1111111111111》审核通过。备注: 审核通过', 1, '2026-01-31 01:06:56');
+INSERT INTO `message` VALUES (13, 1, 1, 4, 16, NULL, '您的视频《111111111111111111》审核通过。备注: 审核通过', 1, '2026-01-31 02:00:57');
+INSERT INTO `message` VALUES (14, 1, 1, 4, 17, NULL, '您的视频《111111111》审核通过。备注: 审核通过', 1, '2026-01-31 02:03:07');
+INSERT INTO `message` VALUES (15, 1, 1, 4, 18, NULL, '您的视频《1111111111111111111111》审核通过。备注: 审核通过', 1, '2026-01-31 02:06:29');
+INSERT INTO `message` VALUES (16, 1, 1, 4, 20, NULL, '您的视频《11111111111》审核通过。备注: 审核通过', 1, '2026-01-31 03:29:33');
 
 -- ----------------------------
 -- Table structure for user
@@ -161,7 +167,7 @@ CREATE TABLE `user`  (
   UNIQUE INDEX `uk_email`(`email`) USING BTREE,
   INDEX `idx_role`(`role`) USING BTREE,
   INDEX `idx_status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user
@@ -170,7 +176,8 @@ INSERT INTO `user` VALUES (1, 'admin', '123456', '系统管理员', 'admin@cvs.c
 INSERT INTO `user` VALUES (2, 'user1', '123456', '音乐爱好者', 'user1@example.com', '13800138001', NULL, 0, 0, '2026-01-21 19:33:32', '2026-01-21 19:33:32');
 INSERT INTO `user` VALUES (3, 'user2', '123456', '演唱会粉丝', 'user2@example.com', '13800138002', NULL, 0, 0, '2026-01-21 19:33:32', '2026-01-21 19:33:32');
 INSERT INTO `user` VALUES (4, 'user3', '123456', 'Lazydu', '', '', 'http://localhost:8080/uploads/avatar/20260122221136_abb7bdad.jpg', 0, 0, '2026-01-22 22:11:41', '2026-01-30 20:42:29');
-INSERT INTO `user` VALUES (5, '2240708107', 'Lazydu0512', '渡', '1242698314@qq.com', '13392696613', 'http://localhost:8080/uploads/avatar/20260123001555_18d49557.jpg', 2, 0, '2026-01-22 23:26:48', '2026-01-23 00:15:55');
+INSERT INTO `user` VALUES (5, '2240708107', 'Lazydu0512', '渡', '1242698314@qq.com', '13392696613', 'https://cvs-system.oss-cn-guangzhou.aliyuncs.com/avatar/2026/01/31/004252_e57b057b.jpg', 2, 0, '2026-01-22 23:26:48', '2026-01-31 00:42:53');
+INSERT INTO `user` VALUES (6, '1242698314', '123456', '嘟嘟', NULL, NULL, 'https://cvs-system.oss-cn-guangzhou.aliyuncs.com/avatar/2026/02/01/004009_59ca5ddf.jpg', 0, 0, '2026-02-01 00:40:09', '2026-02-01 00:40:10');
 
 -- ----------------------------
 -- Table structure for video
@@ -207,7 +214,7 @@ CREATE TABLE `video`  (
   INDEX `fk_reviewer`(`reviewer_id`) USING BTREE,
   CONSTRAINT `fk_video_reviewer` FOREIGN KEY (`reviewer_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_video_uploader` FOREIGN KEY (`uploader_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of video
@@ -236,7 +243,7 @@ CREATE TABLE `video_collect`  (
   INDEX `fk_collect_user`(`user_id`) USING BTREE,
   CONSTRAINT `fk_collect_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_collect_video` FOREIGN KEY (`video_id`) REFERENCES `video` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2014305702247452675 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频收藏表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2014305702247452674 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频收藏表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of video_collect
@@ -260,7 +267,7 @@ CREATE TABLE `video_like`  (
   INDEX `fk_like_user`(`user_id`) USING BTREE,
   CONSTRAINT `fk_like_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_like_video` FOREIGN KEY (`video_id`) REFERENCES `video` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2014004065586995204 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频点赞表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2014004065586995203 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '视频点赞表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of video_like

@@ -1,0 +1,20 @@
+### 1. 登录获取 Token
+POST http://localhost:8080/api/user/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456"
+}
+
+> {% client.global.set("auth_token", response.body.token); %}
+
+
+### 2. 检查加密状态
+GET http://localhost:8080/api/admin/migration/check-encryption-status
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoxLCJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJzdWIiOiIxIiwiaWF0IjoxNzY5ODc5MTczLCJleHAiOjE3NzA0ODM5NzN9.igVU3jqJxieXXEwnStfoWTweZlo8htAmWialVTXFfEk
+
+
+### 3. 执行迁移
+POST http://localhost:8080/api/admin/migration/encrypt-passwords
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoxLCJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJzdWIiOiIxIiwiaWF0IjoxNzY5ODc5MTczLCJleHAiOjE3NzA0ODM5NzN9.igVU3jqJxieXXEwnStfoWTweZlo8htAmWialVTXFfEk
