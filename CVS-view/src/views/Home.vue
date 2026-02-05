@@ -3,7 +3,7 @@
     <!-- B站风格顶部导航栏 -->
     <AppHeader />
 
-    <!-- 主要内容�?-->
+    <!-- 主要内容 -->
     <main class="fnds-main">
       <!-- 分类导航 -->
       <div class="category-section">
@@ -111,7 +111,7 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const currentCategory = ref('all')
-const currentSort = ref('new') // 默认按最新排�?
+const currentSort = ref('new') // 默认按最新排序
 const hotVideos = ref([])
 const loading = ref(false)
 
@@ -152,7 +152,7 @@ const moreCategories = computed(() => {
   return categories.value.slice(MAX_VISIBLE_CITIES + 1)
 })
 
-// 是否选中�?其他"中的城市
+// 是否选中"其他"中的城市
 const isMoreCategoryActive = computed(() => {
   return moreCategories.value.some(city => city.value === currentCategory.value)
 })
@@ -215,11 +215,11 @@ const loadVideos = async () => {
   }
 }
 
-// 格式化时长（支持秒和毫秒�?
+// 格式化时长（支持秒和毫秒）
 const formatDuration = (duration) => {
   if (!duration) return '00:00'
 
-  // 如果时长大于10000，可能是毫秒，转换为�?
+  // 如果时长大于10000，可能是毫秒，转换为秒
   let seconds = duration
   if (duration > 10000) {
     seconds = Math.floor(duration / 1000)
@@ -235,7 +235,7 @@ const formatDuration = (duration) => {
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
 }
 
-// 格式化数�?
+// 格式化数 
 const formatCount = (count) => {
   if (!count) return '0'
   if (count >= 10000) {
@@ -251,7 +251,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* B站风格首页样�?*/
+/* fns首页样式 */
 .fnds-home {
   min-height: 100vh;
   background-color: var(--fnds-bg);
@@ -275,18 +275,18 @@ onMounted(() => {
   pointer-events: none;
 }
 
-/* 确保内容在蒙层之�?*/
+/* 确保内容在蒙层之上 */
 .fnds-home > * {
   position: relative;
   z-index: 1;
 }
 
-/* 主要内容�?*/
+/* 主要内容 */
 .fnds-main {
   padding-top: 20px;
 }
 
-/* 轮播�?*/
+/* 轮播图 */
 .banner-section {
   max-width: 1400px;
   margin: 0 auto 20px;
@@ -558,7 +558,7 @@ onMounted(() => {
   font-weight: 600;
 }
 
-/* 响应�?*/
+/* 响应式*/
 @media (max-width: 768px) {
   .header-container {
     padding: 0 10px;

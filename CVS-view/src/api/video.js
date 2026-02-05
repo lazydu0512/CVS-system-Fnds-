@@ -379,6 +379,74 @@ export const adminAPI = {
         'Authorization': `Bearer ${token}`
       } : {}
     })
+  },
+
+  // Dashboard API
+  getDashboardOverview() {
+    const token = localStorage.getItem('token')
+    return axios.get('/api/dashboard/overview', {
+      headers: token ? {
+        'Authorization': `Bearer ${token}`
+      } : {}
+    })
+  },
+
+  getVideoViewsTrend(days = 30) {
+    const token = localStorage.getItem('token')
+    return axios.get('/api/dashboard/video-views-trend', {
+      params: { days },
+      headers: token ? {
+        'Authorization': `Bearer ${token}`
+      } : {}
+    })
+  },
+
+  getUserRegisterTrend(days = 30) {
+    const token = localStorage.getItem('token')
+    return axios.get('/api/dashboard/user-register-trend', {
+      params: { days },
+      headers: token ? {
+        'Authorization': `Bearer ${token}`
+      } : {}
+    })
+  },
+
+  getVideoUploadTrend(days = 30) {
+    const token = localStorage.getItem('token')
+    return axios.get('/api/dashboard/video-upload-trend', {
+      params: { days },
+      headers: token ? {
+        'Authorization': `Bearer ${token}`
+      } : {}
+    })
+  },
+
+  getInteractionStats() {
+    const token = localStorage.getItem('token')
+    return axios.get('/api/dashboard/interaction-stats', {
+      headers: token ? {
+        'Authorization': `Bearer ${token}`
+      } : {}
+    })
+  },
+
+  getCityDistribution() {
+    const token = localStorage.getItem('token')
+    return axios.get('/api/dashboard/city-distribution', {
+      headers: token ? {
+        'Authorization': `Bearer ${token}`
+      } : {}
+    })
+  },
+
+  getTopVideos(limit = 10) {
+    const token = localStorage.getItem('token')
+    return axios.get('/api/dashboard/top-videos', {
+      params: { limit },
+      headers: token ? {
+        'Authorization': `Bearer ${token}`
+      } : {}
+    })
   }
 }
 

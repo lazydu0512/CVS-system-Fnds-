@@ -14,10 +14,12 @@
     "@element-plus/icons-vue": "^2.3.2",
     "ali-oss": "^6.21.0",
     "axios": "^1.13.2",
+    "echarts": "^5.4.3",
     "element-plus": "^2.13.1",
     "pinia": "^3.0.4",
     "vue": "^3.3.0",
     "vue-cropper": "^1.1.4",
+    "vue-echarts": "^6.6.1",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {

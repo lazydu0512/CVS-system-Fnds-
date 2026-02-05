@@ -44,6 +44,9 @@
 
       <!-- 标签页 -->
       <el-tabs v-model="activeTab" style="margin-top: 30px;" @tab-change="handleTabChange">
+      <el-tab-pane label="数据看板" name="dashboard">
+        <Dashboard />
+      </el-tab-pane>
         <!-- 视频审核 -->
         <el-tab-pane label="视频审核" name="review">
           <div class="review-section">
@@ -254,6 +257,7 @@ import { Search } from '@element-plus/icons-vue'
 import AppHeader from '../components/AppHeader.vue'
 import { useUserStore } from '../stores/user'
 import { getMediaUrl } from '../utils/mediaUrl'
+import Dashboard from '../components/Dashboard.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -269,7 +273,7 @@ const handle401Error = (error) => {
   return false
 }
 
-const activeTab = ref('review')
+const activeTab = ref('dashboard')  // 改为 'dashboard'
 
 // 统计数据
 const stats = reactive({
