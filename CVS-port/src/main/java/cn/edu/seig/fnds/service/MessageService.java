@@ -32,6 +32,10 @@ public class MessageService extends ServiceImpl<MessageMapper, Message> {
     public static final int TYPE_LIKE = 1; // 点赞
     public static final int TYPE_COMMENT = 2; // 评论
     public static final int TYPE_REPLY = 3; // 回复
+    public static final int TYPE_REPORT_SUBMITTED = 4; // 收到举报(管理员)
+    public static final int TYPE_REPORT_APPROVED = 5; // 举报成功(举报者)
+    public static final int TYPE_REPORT_REJECTED = 6; // 举报驳回(举报者)
+    public static final int TYPE_CONTENT_REMOVED = 7; // 内容被删除(被举报者)
 
     /**
      * 发送点赞通知
@@ -152,5 +156,47 @@ public class MessageService extends ServiceImpl<MessageMapper, Message> {
                 .eq(Message::getUserId, userId)
                 .eq(Message::getIsRead, 0)
                 .set(Message::getIsRead, 1));
+    }
+
+    /**
+     * 发送举报通知给管理员
+     * 
+     * @param adminId    管理员ID
+     * @param reporterId 举报人ID（作为消息发送者）
+     * @param reportId   举报ID
+     * @param targetType 举报目标类型
+     * @param content    通知内容
+     */
+    public void sendReportNotificationToAdmin(Long adminId, Long reporterId, Long reportId, String targetType,
+            String content) {
+        Message message = new Message();
+        message.setUserId(adminId);
+        message.setFromUserId(reporterId); // 举报人作为发送者
+        message.setType(TYPE_REPORT_SUBMITTED);
+        message.setContent("收到新举报：" + targetType + " - " + content);
+        message.setIsRead(0);
+        message.setCreateTime(LocalDateTime.now());
+        save(message);
+    }
+
+    /**
+     * 发送举报审核结果通知
+     * 
+     * @param userId     接收者ID
+     * @param reviewerId 审核人ID（作为消息发送者）
+     * @param reportId   举报ID
+     * @param content    通知内容
+     * @param type       消息类型
+     */
+    public void sendReportResultNotification(Long userId, Long reviewerId, Long reportId, String content,
+            Integer type) {
+        Message message = new Message();
+        message.setUserId(userId);
+        message.setFromUserId(reviewerId); // 审核人作为发送者
+        message.setType(type);
+        message.setContent(content);
+        message.setIsRead(0);
+        message.setCreateTime(LocalDateTime.now());
+        save(message);
     }
 }

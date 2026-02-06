@@ -3,12 +3,14 @@ package cn.edu.seig.fnds.controller;
 import cn.edu.seig.fnds.entity.User;
 import cn.edu.seig.fnds.entity.Video;
 import cn.edu.seig.fnds.service.VideoService;
+import cn.edu.seig.fnds.service.ViewLogService;
 import cn.edu.seig.fnds.service.CityManagerService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +26,13 @@ import java.util.Map;
 public class VideoController {
 
     private final VideoService videoService;
+    private final ViewLogService viewLogService;
     private final CityManagerService cityManagerService;
 
-    public VideoController(VideoService videoService, CityManagerService cityManagerService) {
+    public VideoController(VideoService videoService, ViewLogService viewLogService,
+            CityManagerService cityManagerService) {
         this.videoService = videoService;
+        this.viewLogService = viewLogService;
         this.cityManagerService = cityManagerService;
     }
 
@@ -284,22 +289,61 @@ public class VideoController {
     }
 
     /**
-     * 增加播放量
+     * 记录视频浏览
      */
     @PostMapping("/{id}/view")
-    public ResponseEntity<Map<String, Object>> increaseViewCount(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> recordView(
+            @PathVariable Long id,
+            HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
 
         try {
-            videoService.increaseViewCount(id);
+            // 获取用户ID（如果已登录）
+            Long userId = null;
+            try {
+                User user = (User) request.getAttribute("currentUser");
+                if (user != null) {
+                    userId = user.getId();
+                }
+            } catch (Exception e) {
+                // 用户未登录，userId保持为null
+            }
+
+            // 获取IP地址
+            String ipAddress = getClientIp(request);
+
+            // 记录浏览日志
+            viewLogService.recordView(id, userId, ipAddress);
+
             result.put("success", true);
-            result.put("message", "播放量已更新");
+            result.put("message", "浏览记录已保存");
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             result.put("success", false);
-            result.put("message", "更新失败: " + e.getMessage());
+            result.put("message", "记录失败: " + e.getMessage());
             return ResponseEntity.badRequest().body(result);
         }
+    }
+
+    /**
+     * 获取客户端IP地址
+     */
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        // 如果是多级代理，取第一个IP
+        if (ip != null && ip.contains(",")) {
+            ip = ip.split(",")[0].trim();
+        }
+        return ip;
     }
 
     /**

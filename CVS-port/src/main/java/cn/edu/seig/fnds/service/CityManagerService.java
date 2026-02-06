@@ -194,4 +194,11 @@ public class CityManagerService extends ServiceImpl<CityManagerMapper, CityManag
         userMapper.updateById(user);
         return null;
     }
+
+    /**
+     * 根据城市名称获取该城市的管理员列表
+     */
+    public List<CityManager> getManagersByCity(String cityName) {
+        return cityManagerMapper.selectManagersByCityName(cityName);
+    }
 }

@@ -214,10 +214,163 @@
             </div>
           </div>
         </el-tab-pane>
+
+        <!-- 举报审核 -->
+        <el-tab-pane label="举报审核" name="reports">
+          <div class="report-section">
+            <div class="filter-bar">
+              <el-select v-model="reportFilter.status" placeholder="选择状态" style="width: 120px" @change="loadReports">
+                <el-option label="全部" value="" />
+                <el-option label="待审核" :value="0" />
+                <el-option label="已通过" :value="1" />
+                <el-option label="已驳回" :value="2" />
+              </el-select>
+              <el-button type="primary" @click="loadReports">刷新</el-button>
+            </div>
+
+            <el-table
+              :data="reports"
+              style="width: 100%"
+              v-loading="tableLoading"
+            >
+              <el-table-column prop="id" label="ID" width="80" />
+              <el-table-column label="类型" width="100">
+                <template #default="scope">
+                  <el-tag :type="scope.row.targetType === 0 ? 'primary' : 'success'">
+                    {{ scope.row.targetType === 0 ? '视频' : '评论' }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="举报分类" width="120" prop="reasonCategory" />
+              <el-table-column label="举报人" width="120">
+                <template #default="scope">
+                  {{ scope.row.reporter?.nickname || '未知' }}
+                </template>
+              </el-table-column>
+              <el-table-column label="被举报人" width="120">
+                <template #default="scope">
+                  {{ scope.row.reportedUser?.nickname || '未知' }}
+                </template>
+              </el-table-column>
+              <el-table-column label="详细描述" show-overflow-tooltip>
+                <template #default="scope">
+                  {{ scope.row.description || '无' }}
+                </template>
+              </el-table-column>
+              <el-table-column label="状态" width="100">
+                <template #default="scope">
+                  <el-tag :type="getReportStatusTagType(scope.row.status)">
+                    {{ getReportStatusText(scope.row.status) }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column label="举报时间" width="150">
+                <template #default="scope">
+                  {{ formatDate(scope.row.createTime) }}
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="200" v-if="reportFilter.status === '' || reportFilter.status === 0">
+                <template #default="scope">
+                  <div v-if="scope.row.status === 0">
+                    <el-button
+                      type="success"
+                      size="small"
+                      @click="showApproveReportDialog(scope.row)"
+                    >
+                      通过
+                    </el-button>
+                    <el-button
+                      type="danger"
+                      size="small"
+                      @click="showRejectReportDialog(scope.row)"
+                    >
+                      驳回
+                    </el-button>
+                  </div>
+                  <el-tag v-else :type="scope.row.status === 1 ? 'success' : 'danger'">
+                    {{ scope.row.status === 1 ? '已处理' : '已驳回' }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <div class="pagination" v-if="reports.length > 0">
+              <el-pagination
+                v-model:current-page="reportPagination.current"
+                v-model:page-size="reportPagination.size"
+                :total="reportPagination.total"
+                layout="total, prev, pager, next"
+                @current-change="handleReportPageChange"
+              />
+            </div>
+
+            <div v-if="reports.length === 0" class="empty-state">
+              <el-empty description="暂无举报记录">
+                <el-button type="primary" @click="loadReports">刷新</el-button>
+              </el-empty>
+            </div>
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </el-card>
 
-    <!-- 拒绝审核对话框 -->
+    <!-- 审核通过举报对话框 -->
+    <el-dialog
+      v-model="approveReportDialogVisible"
+      title="审核通过举报"
+      width="500px"
+    >
+      <div class="report-review-form">
+        <p>确认要通过这条举报吗？</p>
+        <el-input
+          v-model="reportReviewComment"
+          type="textarea"
+          :rows="3"
+          placeholder="可选：填写审核备注..."
+          maxlength="200"
+          show-word-limit
+        />
+      </div>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="approveReportDialogVisible = false">取消</el-button>
+          <el-button type="primary" :loading="reportReviewing" @click="confirmApproveReport">
+            确认通过
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 驳回举报对话框 -->
+    <el-dialog
+      v-model="rejectReportDialogVisible"
+      title="驳回举报"
+      width="500px"
+    >
+      <div class="report-review-form">
+        <p>请填写驳回原因：</p>
+        <el-input
+          v-model="reportReviewComment"
+          type="textarea"
+          :rows="4"
+          placeholder="请输入驳回举报的原因..."
+          maxlength="200"
+          show-word-limit
+        />
+      </div>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="rejectReportDialogVisible = false">取消</el-button>
+          <el-button type="primary" :loading="reportReviewing" @click="confirmRejectReport">
+            确认驳回
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 拒绝视频审核对话框 -->
     <el-dialog
       v-model="rejectDialogVisible"
       title="拒绝审核"
@@ -252,6 +405,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { videoAPI, adminAPI } from '../api/video'
+import { reportAPI } from '../api/report'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import AppHeader from '../components/AppHeader.vue'
@@ -507,12 +661,141 @@ const formatDuration = (seconds) => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
 }
 
+// 举报管理相关
+const reports = ref([])
+const reportFilter = reactive({
+  status: ''
+})
+const reportPagination = reactive({
+  current: 1,
+  size: 10,
+  total: 0
+})
+const approveReportDialogVisible = ref(false)
+const rejectReportDialogVisible = ref(false)
+const currentReviewReport = ref(null)
+const reportReviewComment = ref('')
+const reportReviewing = ref(false)
+
+// 加载举报列表
+const loadReports = async () => {
+  try {
+    tableLoading.value = true
+    const params = {}
+    if (reportFilter.status !== '') {
+      params.status = reportFilter.status
+    }
+    const response = await reportAPI.getReportList(params)
+    if (response.data.success) {
+      reports.value = response.data.data
+      reportPagination.total = reports.value.length
+    }
+  } catch (error) {
+    if (!handle401Error(error)) {
+      ElMessage.error('加载举报列表失败')
+      console.error('加载举报列表失败:', error)
+    }
+  } finally {
+    tableLoading.value = false
+  }
+}
+
+// 显示审核通过对话框
+const showApproveReportDialog = (report) => {
+  currentReviewReport.value = report
+  reportReviewComment.value = ''
+  approveReportDialogVisible.value = true
+}
+
+// 显示驳回对话框
+const showRejectReportDialog = (report) => {
+  currentReviewReport.value = report
+  reportReviewComment.value = ''
+  rejectReportDialogVisible.value = true
+}
+
+// 确认审核通过
+const confirmApproveReport = async () => {
+  try {
+    reportReviewing.value = true
+    const data = {
+      reviewComment: reportReviewComment.value || null
+    }
+    const response = await reportAPI.approveReport(currentReviewReport.value.id, data)
+    if (response.data.success) {
+      ElMessage.success('举报审核通过')
+      approveReportDialogVisible.value = false
+      loadReports()
+    } else {
+      ElMessage.error(response.data.message || '审核失败')
+    }
+  } catch (error) {
+    ElMessage.error('审核失败')
+    console.error('审核失败:', error)
+  } finally {
+    reportReviewing.value = false
+  }
+}
+
+// 确认驳回举报
+const confirmRejectReport = async () => {
+  if (!reportReviewComment.value.trim()) {
+    ElMessage.warning('请输入驳回原因')
+    return
+  }
+  try {
+    reportReviewing.value = true
+    const data = {
+      reviewComment: reportReviewComment.value
+    }
+    const response = await reportAPI.rejectReport(currentReviewReport.value.id, data)
+    if (response.data.success) {
+      ElMessage.success('已驳回举报')
+      rejectReportDialogVisible.value = false
+      loadReports()
+    } else {
+      ElMessage.error(response.data.message || '驳回失败')
+    }
+  } catch (error) {
+    ElMessage.error('驳回失败')
+    console.error('驳回失败:', error)
+  } finally {
+    reportReviewing.value = false
+  }
+}
+
+// 举报状态相关函数
+const getReportStatusText = (status) => {
+  switch (status) {
+    case 0: return '待审核'
+    case 1: return '已通过'
+    case 2: return '已驳回'
+    default: return '未知'
+  }
+}
+
+const getReportStatusTagType = (status) => {
+  switch (status) {
+    case 0: return 'warning'
+    case 1: return 'success'
+    case 2: return 'danger'
+    default: return ''
+  }
+}
+
+const handleReportPageChange = (page) => {
+  reportPagination.current = page
+  loadReports()
+}
+
 // 标签页切换
 const handleTabChange = (tabName) => {
   if (tabName === 'review' && pendingVideos.value.length === 0) {
     loadPendingVideos()
   } else if (tabName === 'manage' && allVideos.value.length === 0) {
     loadAllVideos()
+  } else if (tabName === 'reports' && reports.value.length === 0) {
+    loadReports()
   }
 }
 

@@ -75,6 +75,14 @@
           >
             分享
           </el-button>
+
+          <el-button
+            v-if="userStore.isLoggedIn && video.uploaderId !== userStore.user.id"
+            :icon="Warning"
+            @click="reportVideo"
+          >
+            举报
+          </el-button>
         </div>
 
         <!-- 视频描述 -->
@@ -148,6 +156,14 @@
                 v-if="userStore.isLoggedIn && (comment.userId === userStore.user.id || userStore.isAdmin)"
               >
                 删除
+              </el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="reportComment(comment)"
+                v-if="userStore.isLoggedIn && comment.userId !== userStore.user.id"
+              >
+                举报
               </el-button>
             </div>
 
@@ -249,6 +265,14 @@
         <p>加载�?..</p>
       </div>
     </div>
+
+    <!-- 举报对话框 -->
+    <ReportDialog
+      v-model="reportDialogVisible"
+      :target-id="reportTargetId"
+      :target-type="reportTargetType"
+      @success="onReportSuccess"
+    />
   </div>
 </template>
 
@@ -264,9 +288,11 @@ import {
   Collection,
   CollectionTag,
   Share,
-  Loading
+  Loading,
+  Warning
 } from '@element-plus/icons-vue'
 import AppHeader from '../components/AppHeader.vue'
+import ReportDialog from '../components/ReportDialog.vue'
 import { getMediaUrl } from '../utils/mediaUrl'
 
 const route = useRoute()
@@ -291,6 +317,11 @@ const likeLoading = ref(false)
 const collectLoading = ref(false)
 
 const videoId = computed(() => route.params.id)
+
+// 举报相关
+const reportDialogVisible = ref(false)
+const reportTargetId = ref(null)
+const reportTargetType = ref(null) // 0: 视频, 1: 评论
 
 // 获取视频详情
 const loadVideoDetail = async () => {
@@ -547,10 +578,13 @@ const deleteComment = async (commentId) => {
   }
 }
 
-// 视频播放事件
-const onVideoPlay = () => {
-  // 增加播放�?
-  videoAPI.increaseViewCount(videoId.value)
+// 初始化浏览量更新
+const initViewCount = async () => {
+  try {
+    await videoAPI.recordView(videoId.value)
+  } catch (error) {
+    console.error('记录浏览失败:', error)
+  }
 }
 
 // 视频加载完成事件
@@ -591,8 +625,29 @@ const formatTime = (timeStr) => {
   return time.toLocaleDateString('zh-CN')
 }
 
+// 举报视频
+const reportVideo = () => {
+  reportTargetId.value = videoId.value
+  reportTargetType.value = 0 // 视频类型
+  reportDialogVisible.value = true
+}
+
+// 举报评论
+const reportComment = (comment) => {
+  reportTargetId.value = comment.id
+  reportTargetType.value = 1 // 评论类型
+  reportDialogVisible.value = true
+}
+
+// 举报成功回调
+const onReportSuccess = () => {
+  ElMessage.success('举报成功，我们会尽快处理')
+  reportDialogVisible.value = false
+}
+
 onMounted(() => {
   loadVideoDetail()
+  initViewCount()  // 记录浏览
 })
 </script>
 

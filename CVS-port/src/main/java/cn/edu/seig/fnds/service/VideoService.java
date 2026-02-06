@@ -202,7 +202,7 @@ public class VideoService extends ServiceImpl<VideoMapper, Video> {
     /**
      * 增加观看次数
      */
-    public void increaseViewCount(Long videoId) {
+    public void incrementViewCount(Long videoId) {
         Video video = getById(videoId);
         if (video != null) {
             video.setViewCount(video.getViewCount() + 1);

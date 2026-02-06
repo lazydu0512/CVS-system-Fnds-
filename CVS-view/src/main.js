@@ -29,6 +29,7 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
+  document.title = 'Fear And Dreams'
   const token = localStorage.getItem('token')
   const user = JSON.parse(localStorage.getItem('user') || 'null')
 

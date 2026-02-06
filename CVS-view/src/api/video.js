@@ -136,8 +136,8 @@ export const videoAPI = {
     })
   },
 
-  // 增加播放量
-  increaseViewCount(id) {
+  // 记录视频浏览
+  recordView(id) {
     return axios.post(`/api/video/${id}/view`)
   },
 
